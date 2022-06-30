@@ -1,12 +1,27 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
-import appwriteSDK from '../helper/utils';
+import { useEffect, useState } from 'react';
+import { appwriteSDK, accountSDK } from '../helper/utils';
 import styles from '../styles/Home.module.css';
 
 export default function Home() {
   const [file, setFile] = useState(null);
   const [name, setName] = useState('');
+
+  const checkSession = () => {
+    const validSession = accountSDK().get();
+    if (!validSession) {
+      accountSDK()
+        .createAnonymousSession()
+        .then((resp) => console.log(resp))
+        .catch((err) => console.log(err));
+    }
+    return;
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +35,7 @@ export default function Home() {
     sdk
       .then((url) => {
         const data = { name, upload: url.$id };
-        fetch('/api/uploadPostgres', {
+        fetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
@@ -31,14 +46,6 @@ export default function Home() {
       .catch((err) => {
         console.log(err);
       });
-
-    // fetch('/api/uploadPostgres', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(data),
-    // })
-    //   .then((res) => console.log(res))
-    //   .catch((err) => console.log(err));
   };
 
   return (

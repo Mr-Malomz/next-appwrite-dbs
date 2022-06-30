@@ -1,12 +1,16 @@
-import { Storage, Client } from 'appwrite';
+import { Storage, Client, Account } from 'appwrite';
 
-const appwriteSDK = () => {
-  const client = new Client();
+const client = new Client();
+client.setEndpoint('http://localhost/v1').setProject('62bcbd79bba694ad0695');
+
+export const appwriteSDK = () => {
   const storage = new Storage(client);
-
-  client.setEndpoint('http://localhost/v1').setProject('62bcbd79bba694ad0695');
 
   return storage;
 };
 
-export default appwriteSDK;
+export const accountSDK = () => {
+  const account = new Account(client);
+
+  return account;
+};
