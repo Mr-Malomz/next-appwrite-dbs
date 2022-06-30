@@ -49,19 +49,6 @@
   font-size: 1.5rem;
 }
 
-.grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
-}
-
-.img {
-  border: 1px solid;
-  margin-left: .6rem;
-}
-
 .button {
   display: block;
   border: none;
@@ -70,11 +57,4 @@
   background-color: blue;
   color: white;
   cursor: pointer;
-}
-
-@media (max-width: 600px) {
-  .grid {
-    width: 100%;
-    flex-direction: column;
-  }
 }

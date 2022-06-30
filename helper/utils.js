@@ -1,7 +1,9 @@
 import { Storage, Client, Account } from 'appwrite';
 
 const client = new Client();
-client.setEndpoint('http://localhost/v1').setProject('62bcbd79bba694ad0695');
+client
+  .setEndpoint('http://localhost/v1')
+  .setProject('YOUR PROJECT ID COMES HERE');
 
 export const appwriteSDK = () => {
   const storage = new Storage(client);

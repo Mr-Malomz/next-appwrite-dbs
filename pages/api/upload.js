@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-export default async function upload(req, res) {
+export default function upload(req, res) {
   const { name, upload } = req.body;
   const prisma = new PrismaClient();
 

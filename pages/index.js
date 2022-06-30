@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { appwriteSDK, accountSDK } from '../helper/utils';
 import styles from '../styles/Home.module.css';
@@ -27,7 +26,7 @@ export default function Home() {
     e.preventDefault();
 
     const sdk = appwriteSDK().createFile(
-      '62bcbea61b7f5d1a07f6',
+      'YOUR BUCKET ID COMES HERE',
       'unique()',
       file
     );
@@ -40,7 +39,10 @@ export default function Home() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         })
-          .then((res) => console.log(res))
+          .then((res) => {
+            console.log(res);
+            alert('File Upload successful!');
+          })
           .catch((err) => console.log(err));
       })
       .catch((err) => {
