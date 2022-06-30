@@ -13,5 +13,5 @@ datasource db {
 model Upload {
   id          Int    @id @default(autoincrement())
   name        String
-  uploadURL   String
+  uploadID    String
 }

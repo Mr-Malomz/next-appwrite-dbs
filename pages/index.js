@@ -1,60 +1,44 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState } from 'react';
+import appwriteSDK from '../helper/utils';
 import styles from '../styles/Home.module.css';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export default function Home() {
-  const [imgSrc, setImgSrc] = useState(null);
-  console.log(prisma);
-
-  const handleChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const fileList = e.target.files;
-      const fileArray = [];
-      Object.keys(fileList).map((element) => {
-        fileArray.push(URL.createObjectURL(fileList[element]));
-      });
-      setImgSrc(fileArray);
-    }
-  };
+  const [file, setFile] = useState(null);
+  const [name, setName] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const fileInput = Array.from(form.elements).find(
-      ({ name }) => name === 'img'
+
+    const sdk = appwriteSDK().createFile(
+      '62bcbea61b7f5d1a07f6',
+      'unique()',
+      file
     );
-    const fileChildren = [];
 
-    const formData = new FormData();
-
-    formData.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
-
-    Object.keys(fileInput.files).map((element) => {
-      fileChildren.push(fileInput.files[element]);
-    });
-
-    const request = () =>
-      fileChildren.map((file) => {
-        formData.append('file', file);
-        fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
+    sdk
+      .then((url) => {
+        const data = { name, upload: url.$id };
+        fetch('/api/uploadPostgres', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        })
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => {
+        console.log(err);
       });
 
-    Promise.all(request())
-      .then((res) => {
-        alert('File(s) Uploaded successsfully');
-        setImgSrc(null);
-      })
-      .catch((e) => alert('Error uploading file'));
+    // fetch('/api/uploadPostgres', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(data),
+    // })
+    //   .then((res) => console.log(res))
+    //   .catch((err) => console.log(err));
   };
 
   return (
@@ -76,37 +60,24 @@ export default function Home() {
             <input
               type='text'
               name='name'
+              value={name}
               required
               className={styles.inputText}
-              onChange={handleChange}
+              onChange={(e) => setName(e.target.value)}
             />
           </fieldset>
           <fieldset className={styles.fieldset}>
-            <label htmlFor='img' className={styles.label}>
+            <label htmlFor='file' className={styles.label}>
               Select image:
             </label>
             <input
               type='file'
-              name='img'
-              accept='image/*'
+              name='file'
               required
-              multiple
               className={styles.fileUpload}
-              onChange={handleChange}
+              onChange={(e) => setFile(e.target.files[0])}
             />
           </fieldset>
-          <div className={styles.grid}></div>
-          {imgSrc &&
-            imgSrc.map((image, i) => (
-              <Image
-                key={i}
-                src={image}
-                height={64}
-                width={64}
-                alt='uploads'
-                className={styles.img}
-              />
-            ))}
           <button className={styles.button}>Submit</button>
         </form>
       </main>
